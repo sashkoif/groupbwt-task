@@ -17,14 +17,18 @@ public class World {
         }
 
         rocks = new ArrayList<>();
-        for (int i=0;i<5;i++){
-            rocks.add(new Field(new Random().ints(0,sizeX).findFirst().getAsInt(),
-                                new Random().ints(0,sizeY).findFirst().getAsInt()));
+        for (int i=0;i<100;i++){
+            rocks.add(new Field(new Random().ints(1,sizeX).findFirst().getAsInt(),
+                                new Random().ints(1,sizeY).findFirst().getAsInt()));
         }
     }
     
     public List<Field> getFields() {
 		return fields;
+    }
+
+    public List<Field> getRocks() {
+		return rocks;
     }
     
     public boolean isSpaceAvailable(List<Field> movedBody) {
