@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class World {
     private final List<Field> fields;
-    private final List<Field> rocks;
+    private List<Field> rocks;
     
     public World(int sizeX, int sizeY) {
         fields = new ArrayList<>(sizeX*sizeY);
@@ -16,11 +16,11 @@ public class World {
             }
         }
 
-        rocks = new ArrayList<>();
-        for (int i=0;i<100;i++){
-            rocks.add(new Field(new Random().ints(1,sizeX).findFirst().getAsInt(),
-                                new Random().ints(1,sizeY).findFirst().getAsInt()));
-        }
+        // rocks = new ArrayList<>();
+        // for (int i=0;i<100;i++){
+        //     rocks.add(new Field(new Random().ints(1,sizeX).findFirst().getAsInt(),
+        //                         new Random().ints(1,sizeY).findFirst().getAsInt()));
+        // }
     }
     
     public List<Field> getFields() {
@@ -29,6 +29,10 @@ public class World {
 
     public List<Field> getRocks() {
 		return rocks;
+    }
+
+    public void setRocks(List<Field> rocks) {
+		this.rocks = rocks;
     }
     
     public boolean isSpaceAvailable(List<Field> movedBody) {

@@ -4,12 +4,17 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.tasks.groupbwttask.App;
@@ -22,6 +27,9 @@ public class MainGUI extends JFrame implements ActionListener {
     JTextField targetFieldY;
     JTextField objectFieldX;
     JTextField objectFieldY;
+    JTextField initObjectFieldX;
+    JTextField initObjectFieldY;
+    JTextArea rocksField;
 
 
 	public MainGUI() {
@@ -67,13 +75,48 @@ public class MainGUI extends JFrame implements ActionListener {
         objectFieldY = new JTextField();
         objectFieldY.setBounds(1050, 35, 50, 20);
         this.getLayeredPane().add(objectFieldY);
+
+        JLabel initObjectLabelX = new JLabel("Start position X:");
+        initObjectLabelX.setBounds(750, 65, 90, 20);
+        this.getLayeredPane().add(initObjectLabelX);
+        initObjectFieldX = new JTextField();
+        initObjectFieldX.setBounds(860, 65, 50, 20);
+        this.getLayeredPane().add(initObjectFieldX);
+        
+        JLabel initObjectLabelY = new JLabel("Start position Y:");
+        initObjectLabelY.setBounds(930, 65, 90, 20);
+        this.getLayeredPane().add(initObjectLabelY);
+        initObjectFieldY = new JTextField();
+        initObjectFieldY.setBounds(1050, 65, 50, 20);
+        this.getLayeredPane().add(initObjectFieldY);
+
+        JLabel rocksLabel = new JLabel("Rocks:");
+        rocksLabel.setBounds(750, 95, 90, 20);
+        this.getLayeredPane().add(rocksLabel);
+        rocksField = new JTextArea();
+        rocksField.setBounds(860, 95, 100, 300);
+        JScrollPane scroll = new JScrollPane(rocksField);
+        scroll.setBounds(860, 95, 100, 300);
+        this.getLayeredPane().add(scroll);
+        String rocksText = "";
+        for (int i=0;i<100;i++){
+            int randomX = new Random().ints(1,100).findFirst().getAsInt();
+            int randomY = new Random().ints(1,100).findFirst().getAsInt();
+            rocksText = rocksText.concat(""+randomX+","+randomY+";\n");
+        }
+        rocksField.setText(rocksText);
         
         JButton initButton = new JButton();
-        initButton.setBounds(750, 65, 150, 40);
+        initButton.setBounds(750, 410, 150, 40);
         initButton.setText("Start");
         initButton.addActionListener(this);
         this.getLayeredPane().add(initButton);
-	}
+    }
+    
+    private Field convertStringToField(String rockString){
+        String[] splited = rockString.split(",");
+        return new Field(Integer.parseInt(splited[0]),Integer.parseInt(splited[1]));
+    }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -85,7 +128,15 @@ public class MainGUI extends JFrame implements ActionListener {
         Field targetField = new Field(Integer.parseInt(targetFieldX.getText()),
                                         Integer.parseInt(targetFieldY.getText()));
 
-        Map<String,List<Field>> results = App.init(objectSizeX,objectSizeY,targetField);
+        Field initField = new Field(Integer.parseInt(initObjectFieldX.getText()),
+                                        Integer.parseInt(initObjectFieldY.getText()));
+
+        String rocksText = rocksField.getText();
+        List<String> rosksString = Arrays.asList(rocksText.split(";\n"));
+        List<Field> initRocks = rosksString.stream().map(this::convertStringToField).collect(Collectors.toList());
+         
+
+        Map<String,List<Field>> results = App.init(objectSizeX,objectSizeY,initField,targetField,initRocks);
         
         List<Field> pathFields = results.get("pathFields");
         for (Field pathField:pathFields){

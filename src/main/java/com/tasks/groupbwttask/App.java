@@ -3,7 +3,6 @@ package com.tasks.groupbwttask;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import com.tasks.groupbwttask.models.Coordinator;
@@ -20,16 +19,16 @@ public class App
         mainGUI.setVisible(true);
     }
 
-	public static Map<String,List<Field>> init(int objectSizeX, int objectSizeY, Field targetField) {
+	public static Map<String,List<Field>> init(int objectSizeX, int objectSizeY, Field initField, Field targetField, List<Field> initRocks) {
         int initX = 100;
         int initY = 100;
         World world = new World(initX, initY);
-        
-        RunningObject runningObject = new RunningObject(
-                            world.getFields().get(0),objectSizeX,objectSizeY);
+        world.setRocks(initRocks);
 
-        // Field targetField = world.getFields()
-        //                     .get(new Random().ints(0,initX*initY).findFirst().getAsInt());
+        int initObjectX = initField.getX();
+        int initObjectY = initField.getY();
+        
+        RunningObject runningObject = new RunningObject(initField,objectSizeX,objectSizeY);
 
         Coordinator coordinator = new Coordinator(world, runningObject, targetField);
 
@@ -40,8 +39,7 @@ public class App
                                          .collect(Collectors.toList());
 
         List<Field> rocks = world.getRocks();
-        List<Field> body = new RunningObject(
-            world.getFields().get(0),objectSizeX,objectSizeY).getBody();
+        List<Field> body = new RunningObject(new Field(initObjectX, initObjectY),objectSizeX,objectSizeY).getBody();
 
         Map<String,List<Field>> result = new HashMap<>();
         result.put("pathFields", pathFields);
